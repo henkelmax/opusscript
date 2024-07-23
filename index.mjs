@@ -1,13 +1,14 @@
 import opusscript from './build/opusscript_native_wasm.mjs';
 
-var opusscript_native;
+let opusscript_native;
 
-var OpusApplication = {
+const OpusApplication = {
     VOIP: 2048,
     AUDIO: 2049,
     RESTRICTED_LOWDELAY: 2051
 };
-var OpusError = {
+
+const OpusError = {
     "0": "OK",
     "-1": "Bad argument",
     "-2": "Buffer too small",
@@ -17,13 +18,14 @@ var OpusError = {
     "-6": "Invalid state",
     "-7": "Memory allocation fail"
 };
-var VALID_SAMPLING_RATES = [8000, 12000, 16000, 24000, 48000];
-var MAX_FRAME_SIZE = 48000 * 60 / 1000;
-var MAX_PACKET_SIZE = 1276 * 3;
+
+const VALID_SAMPLING_RATES = [8000, 12000, 16000, 24000, 48000];
+const MAX_FRAME_SIZE = 48000 * 60 / 1000;
+const MAX_PACKET_SIZE = 1276 * 3;
 
 export async function init(binary) {
     if (typeof binary === "string") {
-        let wasmBinary = await fetch(binary).then((e => e.arrayBuffer()));
+        const wasmBinary = await fetch(binary).then((e => e.arrayBuffer()));
         opusscript_native = await opusscript({wasmBinary});
     } else {
         opusscript_native = await opusscript({wasmBinary: binary});
@@ -64,7 +66,7 @@ function OpusScript(samplingRate, channels, application, options) {
 OpusScript.prototype.encode = function encode(buffer, frameSize) {
     this.inPCM.set(buffer);
 
-    var len = this.handler._encode(this.inPCM.byteOffset, buffer.length, this.outOpusPointer, frameSize);
+    const len = this.handler._encode(this.inPCM.byteOffset, buffer.length, this.outOpusPointer, frameSize);
     if (len < 0) {
         throw new Error("Encode error: " + OpusError["" + len]);
     }
@@ -75,7 +77,7 @@ OpusScript.prototype.encode = function encode(buffer, frameSize) {
 OpusScript.prototype.decode = function decode(buffer) {
     this.inOpus.set(buffer);
 
-    var len = this.handler._decode(this.inOpusPointer, buffer.length, this.outPCM.byteOffset);
+    const len = this.handler._decode(this.inOpusPointer, buffer.length, this.outPCM.byteOffset);
     if (len < 0) {
         throw new Error("Decode error: " + OpusError["" + len]);
     }
@@ -84,7 +86,7 @@ OpusScript.prototype.decode = function decode(buffer) {
 };
 
 OpusScript.prototype.encoderCTL = function encoderCTL(ctl, arg) {
-    var len = this.handler._encoder_ctl(ctl, arg);
+    const len = this.handler._encoder_ctl(ctl, arg);
     if (len < 0) {
         throw new Error("Encoder CTL error: " + OpusError["" + len]);
     }
@@ -95,7 +97,7 @@ OpusScript.prototype.setBitrate = function setBitrate(bitrate) {
 };
 
 OpusScript.prototype.decoderCTL = function decoderCTL(ctl, arg) {
-    var len = this.handler._decoder_ctl(ctl, arg);
+    const len = this.handler._decoder_ctl(ctl, arg);
     if (len < 0) {
         throw new Error("Decoder CTL error: " + OpusError["" + len]);
     }
