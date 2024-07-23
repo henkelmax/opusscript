@@ -2,7 +2,7 @@ declare module 'opusscript' {
     /**
      * Opus application type
      */
-    enum OpusApplication {
+    export enum OpusApplication {
         /**
          * Voice Over IP
          */
@@ -16,7 +16,8 @@ declare module 'opusscript' {
          */
         RESTRICTED_LOWDELAY = 2051
     }
-    enum OpusError {
+
+    export enum OpusError {
         "OK" = 0,
         "Bad argument" = -1,
         "Buffer too small" = -2,
@@ -26,28 +27,31 @@ declare module 'opusscript' {
         "Invalid state" = -6,
         "Memory allocation fail" = -7
     }
+
     /**
      * Valid audio sampling rates
      */
-    type VALID_SAMPLING_RATES = 8000 | 12000 | 16000 | 24000 | 48000;
+    export type VALID_SAMPLING_RATES = 8000 | 12000 | 16000 | 24000 | 48000;
     /**
      * Maximum bytes in a frame
      */
-    type MAX_FRAME_SIZE = 2880;
+    export type MAX_FRAME_SIZE = 2880;
     /**
      * Maximum bytes in a packet
      */
-    type MAX_PACKET_SIZE = 3828;
+    export type MAX_PACKET_SIZE = 3828;
+
     /**
      * Constructor options for OpusScript
      */
-    interface OpusScriptOptions {
+    export interface OpusScriptOptions {
         /**
          * Whether or not to use the WASM-compiled version of OpusScript. This is true by default.
          */
         wasm?: boolean;
     }
-    class OpusScript {
+
+    export class OpusScript {
         /**
          * Different Opus application types
          */
@@ -74,27 +78,39 @@ declare module 'opusscript' {
          * Create a new Opus en/decoder
          */
         constructor(samplingRate: VALID_SAMPLING_RATES, channels?: number, application?: OpusApplication, options?: OpusScriptOptions);
+
         /**
          * Encode a buffer into Opus
          */
-        encode(buffer: Buffer, frameSize: number): Buffer;
+        encode(buffer: ArrayBuffer, frameSize: number): ArrayBuffer;
+
         /**
          * Decode an opus buffer
          */
-        decode(buffer: Buffer): Buffer;
+        decode(buffer: ArrayBuffer): ArrayBuffer;
+
         /**
          * Set the encoder bitrate
          */
         setBitrate(bitrate: number): void;
+
         /**
          * Encoder/decoder parameters
          */
         encoderCTL(ctl: number, arg: number): void;
+
         decoderCTL(ctl: number, arg: number): void;
+
         /**
          * Delete the opus object
          */
         delete(): void;
     }
-    export = OpusScript;
+
+    /**
+     * Loads the wasm binary
+     * @param binary the binary or url
+     */
+    export function init(binary: ArrayBuffer | string): void;
+
 }
