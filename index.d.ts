@@ -111,6 +111,6 @@ declare module 'opusscript' {
      * Loads the wasm binary
      * @param binary the binary or url
      */
-    export function init(binary: ArrayBuffer | string): void;
+    export function init(binary: ArrayBuffer | string): Promise<void>;
 
 }
